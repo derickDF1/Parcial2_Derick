@@ -1,0 +1,83 @@
+﻿@page "/LibroElectronico"
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+<h3>Libros Electronicos</h3>
+
+<EditForm Model="libroelectronico">
+    <div class="form-group">
+        <label for="Titulo">Titulo del libro</label>
+        <InputText id="Titulo" @bind-Value="libroelectronico.Titulo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Autor">Autor del libro</label>
+        <InputText id="Autor" @bind-Value="libroelectronico.Autor" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Genero">Genero del libro</label>
+        <InputText id="Genero" @bind-Value="libroelectronico.Genero" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="AnioPublicacion">Año de publicación del libro</label>
+        <InputDate id="AnioPublicacion" @bind-Value="libroelectronico.AnioPublicacion" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Formato">Formato del libro (PDF, EPUB, MOBI, etc...)</label>
+        <InputText id="Formato" @bind-Value="libroelectronico.Formato" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="TamanioArchivo">Tamaño del libro</label>
+        <InputText id="TamanioArchivo" @bind-Value="libroelectronico.TamanioArchivo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" @onclick="@Guardar">Guardar</button>
+    </div>
+</EditForm>
+
+@if (listaLibrosE != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+                <th>Autor</th>
+                <th>Genero</th>
+                <th>Año de publicación</th>
+                <th>Formato</th>
+                <th>Tamaño del arhcivo</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var libroelectronico in listaLibrosE)
+            {
+                <tr>
+                    <td>@libroelectronico.Titulo</td>
+                    <td>@libroelectronico.Autor</td>
+                    <td>@libroelectronico.Genero</td>
+                    <td>@libroelectronico.AnioPublicacion</td>
+                    <td>@libroelectronico.Formato</td>
+                    <td>@libroelectronico.TamanioArchivo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private LibrosElectronicos libroelectronico = new LibrosElectronicos();
+    List<LibrosElectronicos> listaLibrosE = new List<LibrosElectronicos>();
+
+    protected async Task Guardar()
+    {
+        listaLibrosE.Add(libroelectronico);
+        await localStorage.SetItemAsync("listaLibrosE", listaLibrosE);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaLibrosE = await localStorage.GetItemAsync<List<LibrosElectronicos>>("listaLibrosE");
+        if (listaLibrosE == null)
+            listaLibrosE = new List<LibrosElectronicos>();
+    }
+}
