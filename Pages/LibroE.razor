@@ -45,7 +45,8 @@
                 <th>Año de publicación</th>
                 <th>Formato</th>
                 <th>Tamaño del libro (MB)</th>
-                <th></th>
+                <th>Editar</th>
+                <th>Eliminar</th>
             </tr>
         </thead>
         <tbody>
@@ -64,6 +65,7 @@
                         Editar
                     </button>
                 </td>
+                <td><button class="btn btn-danger" @onclick="@(() => BorrarLibroE(libroelectronico.Titulo))">Eliminar</button></td>
             </tr>
             }
         </tbody>
@@ -85,5 +87,11 @@
         listaLibrosE = await localStorage.GetItemAsync<List<LibrosElectronicos>>("listaLibrosE");
         if (listaLibrosE == null)
             listaLibrosE = new List<LibrosElectronicos>();
+    }
+
+    protected async Task BorrarLibroE(string nombre)
+    {
+        listaLibrosE.Remove(listaLibrosE.Find(a => a.Titulo == nombre));
+        await localStorage.SetItemAsync("listaLibrosE", listaLibrosE);
     }
 }
