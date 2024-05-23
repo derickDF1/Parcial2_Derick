@@ -1,8 +1,8 @@
-﻿@page "/LibroElectronico"
+﻿@page "/LibroEl-editar/{TituloLibro}"
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager NavigationManager
 
-<h3>Libros Electronicos</h3>
+<h3>Revista</h3>
 
 <EditForm Model="libroelectronico">
     <div class="form-group">
@@ -34,50 +34,17 @@
     </div>
 </EditForm>
 
-@if (listaLibrosE != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titulo</th>
-                <th>Autor</th>
-                <th>Genero</th>
-                <th>Año de publicación</th>
-                <th>Formato</th>
-                <th>Tamaño del libro (MB)</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var libroelectronico in listaLibrosE)
-            {
-            <tr>
-                <td>@libroelectronico.Titulo</td>
-                <td>@libroelectronico.Autor</td>
-                <td>@libroelectronico.Genero</td>
-                <td>@libroelectronico.AnioPublicacion</td>
-                <td>@libroelectronico.Formato</td>
-                <td>@libroelectronico.TamanioArchivo</td>
-                <td>
-                    <button class="btn btn-warning"
-                            @onclick="@(() => NavigationManager.NavigateTo($"/LibroEl-editar/{libroelectronico.Titulo}"))">
-                        Editar
-                    </button>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
-}
-
 @code {
+    [Parameter]
+    public string TituloLibro { get; set; }
     private LibrosElectronicos libroelectronico = new LibrosElectronicos();
     List<LibrosElectronicos> listaLibrosE = new List<LibrosElectronicos>();
 
     protected async Task Guardar()
     {
-        listaLibrosE.Add(libroelectronico);
         await localStorage.SetItemAsync("listaLibrosE", listaLibrosE);
+
+        NavigationManager.NavigateTo("/LibroElectronico");
     }
 
     protected override async Task OnInitializedAsync()
@@ -85,5 +52,7 @@
         listaLibrosE = await localStorage.GetItemAsync<List<LibrosElectronicos>>("listaLibrosE");
         if (listaLibrosE == null)
             listaLibrosE = new List<LibrosElectronicos>();
+
+        libroelectronico = listaLibrosE.FirstOrDefault(c => c.Titulo == TituloLibro);
     }
 }
